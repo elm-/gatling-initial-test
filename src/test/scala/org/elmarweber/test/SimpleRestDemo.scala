@@ -8,9 +8,9 @@ import bootstrap._
 import assertions._
 import org.apache.commons.lang.RandomStringUtils
 
-class RecordedSimulation extends Simulation {
+class SimpleRestDemo extends Simulation {
 	val httpConf = httpConfig
-			.baseURL("http://localhost:8080")
+			.baseURL("http://iic-cloud02:8080")
 			.acceptHeader("application/json")
 
 
@@ -30,16 +30,16 @@ class RecordedSimulation extends Simulation {
   }
 
 	val scn = scenario("Simple Create and Get")
-    .during(30 seconds) {
+    .during(200 seconds) {
       feed(userDataFeeder)
       .exec(http("create user")
             .post("/user/")
             .headers(headers)
-              .body("""{
-                      |    "username": "${username}",
-                      |    "displayName": "${displayName}",
-                      |    "apiKey": "${apiKey}"
-                      |}""".stripMargin)
+            .body("""{
+                    |    "username": "${username}",
+                    |    "displayName": "${displayName}",
+                    |    "apiKey": "${apiKey}"
+                    |}""".stripMargin)
             .check(status.is(200))
         )
       .exec(http("get")
@@ -48,5 +48,5 @@ class RecordedSimulation extends Simulation {
       )
     }
 
-	setUp(scn.users(8).ramp(16).protocolConfig(httpConf))
+	setUp(scn.users(100).ramp(100).protocolConfig(httpConf))
 }
